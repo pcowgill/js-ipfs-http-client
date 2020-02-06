@@ -15,3 +15,5 @@ examples/sub-module/*-bundle.js
 
 .vscode/
 .DS_Store
+.connect-deps-cache/
+.connect-deps.json
