@@ -63,7 +63,7 @@ module.exports = configure(({ ky }) => {
       console.log({ file });
       file = toCamel(file)
 
-      console.log({ file });
+      console.log("toCamelifiedFile", file);
 
       if (options.progress && file.bytes) {
         console.log("options.progress && file.bytes");

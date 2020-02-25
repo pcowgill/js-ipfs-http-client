@@ -7,7 +7,9 @@ const mtimeToObject = require('../lib/mtime-to-object')
 exports.toFormData = async input => {
   console.log("toFormData browser");
   const files = normaliseInput(input)
+  console.log({ files })
   const formData = new FormData()
+  console.log({ formData })
   let i = 0
 
   for await (const file of files) {
@@ -30,7 +32,7 @@ exports.toFormData = async input => {
     }
 
     if (file.content) {
-      console.log("file.content")
+      console.log("file.content", file.content)
       // In the browser there's _currently_ no streaming upload, buffer up our
       // async iterator chunks and append a big Blob :(
       // One day, this will be browser streams
@@ -47,14 +49,29 @@ exports.toFormData = async input => {
         header: headers
       })
     }
-    console.log({ file })
-    console.log({ formData })
+
+    const keyToGet = 'file-0'
+
+    if (formData.entries) {
+      const formDataEntries = formData.entries();
+      for(var pair of formDataEntries) {
+        console.log(pair[0]+ ', '+ pair[1]); 
+      }
+      const field = formData.get(keyToGet)
+      console.log({ field })
+    }
+
+    if (formData.getParts) {
+      const formDataParts = formData.getParts();
+      console.log({ formDataParts })
+      const field = formDataParts.find(item => item.fieldName === keyToGet);
+      if (field) {
+        console.log({ field })
+      }
+    }
 
     i++
   }
-
-  const formDataParts = formData.getParts();
-  console.log({ formDataParts })
 
   // for (var p of formData.entries()) {
   //   console.log({ p })
