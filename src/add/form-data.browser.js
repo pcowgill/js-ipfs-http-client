@@ -9,7 +9,8 @@ exports.toFormData = async input => {
   const files = normaliseInput(input)
   console.log({ files })
   const formData = new FormData()
-  console.log({ formData })
+
+  // console.log({ formData })
   let i = 0
 
   for await (const file of files) {
@@ -38,12 +39,26 @@ exports.toFormData = async input => {
       // One day, this will be browser streams
       const bufs = []
       for await (const chunk of file.content) {
+        console.log("file.content chunk", chunk)
         bufs.push(chunk)
       }
 
-      formData.append(`file-${i}`, new Blob(bufs, { type: 'application/octet-stream' }), encodeURIComponent(file.path), {
+      const newBlob = new Blob(bufs, { type: 'application/octet-stream' });
+      console.log({ newBlob })
+      const encodedUriComponent = encodeURIComponent(file.path);
+
+      formData.append(`file-${i}`, newBlob, encodedUriComponent, {
         header: headers
       })
+
+      if (newBlob.data) {
+        const newBlobData = newBlob.data;
+        console.log("newBlob data", newBlobData);
+        // formData.append(`file-${i}`, newBlobData, encodedUriComponent, {
+        //   header: headers
+        // })
+      }
+
     } else {
       formData.append(`dir-${i}`, new Blob([], { type: 'application/x-directory' }), encodeURIComponent(file.path), {
         header: headers
